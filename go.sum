@@ -7,8 +7,16 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/go-rel/rel v0.10.2 h1:SNPaMBe433v3nqLMhNWuvENG8686MmUGN/4PurjXKAY=
 github.com/go-rel/rel v0.10.2/go.mod h1:buCqQ7fVotVXxj/XgRbMs9ojmFW5ICHf1mmTl7wcFTI=
+github.com/go-rel/rel v0.10.3-0.20210306094353-40e33c7e9ddf h1:b2HRVjoZDAzxQzChvsi6StW5A2P/TmkaYVf6FbFkjuM=
+github.com/go-rel/rel v0.10.3-0.20210306094353-40e33c7e9ddf/go.mod h1:XgnuQgSs6iSOQaZ+fp+uz4GdYsdyKcnAKkc0WhkXVJI=
 github.com/go-rel/rel v0.10.3-0.20210306094639-121c2f8b6ab8 h1:VQmFP1UIU8bmEZzmSGx6g+cvULRFMVWFnTTjdYPM3nU=
 github.com/go-rel/rel v0.10.3-0.20210306094639-121c2f8b6ab8/go.mod h1:XgnuQgSs6iSOQaZ+fp+uz4GdYsdyKcnAKkc0WhkXVJI=
+github.com/go-rel/rel v0.10.3-0.20210306130411-4667bea2cb08 h1:PqAPte72zeREqn8W2WbPr2R5+L0hNZTXDhIPx8LaylQ=
+github.com/go-rel/rel v0.10.3-0.20210306130411-4667bea2cb08/go.mod h1:XgnuQgSs6iSOQaZ+fp+uz4GdYsdyKcnAKkc0WhkXVJI=
+github.com/go-rel/rel v0.10.3-0.20210306135938-df708fac774a h1:pIFxP1M1YA7E9lWwBKvF3X0nOKMdGkdH4mh1pyIir3s=
+github.com/go-rel/rel v0.10.3-0.20210306135938-df708fac774a/go.mod h1:XgnuQgSs6iSOQaZ+fp+uz4GdYsdyKcnAKkc0WhkXVJI=
+github.com/go-rel/rel v0.11.0 h1:eDMn6HCM9rKjWRLrglbb4a5F2qMS+d6ZIsEjw9AT+JI=
+github.com/go-rel/rel v0.11.0/go.mod h1:XgnuQgSs6iSOQaZ+fp+uz4GdYsdyKcnAKkc0WhkXVJI=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe h1:lXe2qZdvpiX5WZkZR4hgp4KJVfY3nMkvmwbVkpv1rVY=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
