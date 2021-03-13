@@ -13,13 +13,21 @@ jobs:
       matrix:
         mssql: [2017, 2019]
     runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:${{ matrix.mssql }}-latest
+        ports:
+          - 1433:1433
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: REL2021-mssql
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
-      - uses: 280780363/sqlserver-action@v1.0
-        with:
-          accept eula: Y
-          sa password: REL2021-mssql
+#       - uses: 280780363/sqlserver-action@v1.0
+#         with:
+#           accept eula: Y
+#           sa password: REL2021-mssql
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
       - name: run go test ./...
