@@ -2,12 +2,11 @@
 //
 // Usage:
 //	// open mssql connection.
-//	adapter, err := mssql.Open("root@(127.0.0.1:3306)/rel_test?charset=utf8&parseTime=True&loc=Local")
+//	adapter, err := mssql.Open("sqlserver://sa:REL2021-mssql@localhost:1433?database=rel")
 //	if err != nil {
 //		panic(err)
 //	}
 //	defer adapter.Close()
-//
 //	// initialize REL's repo.
 //	repo := rel.New(adapter)
 package mssql
