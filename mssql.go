@@ -1,14 +1,4 @@
 // Package mssql wraps mssql driver as an adapter for REL.
-//
-// Usage:
-//	// open mssql connection.
-//	adapter, err := mssql.Open("sqlserver://sa:REL2021-mssql@localhost:1433?database=rel")
-//	if err != nil {
-//		panic(err)
-//	}
-//	defer adapter.Close()
-//	// initialize REL's repo.
-//	repo := rel.New(adapter)
 package mssql
 
 import (

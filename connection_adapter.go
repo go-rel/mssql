@@ -131,7 +131,7 @@ func (ca ConnectionAdapter) Close() error {
 	return ca.db.Close()
 }
 
-// NewConnectionAdapter componet.
+// NewConnectionAdapter components.
 func NewConnectionAdapter(instrumentationAdapter *InstrumentationAdapter, db *sql.DB, tx *sql.Tx, savepoint int, adapterFactory AdapterFactory) ConnectionAdapter {
 	return ConnectionAdapter{
 		instrumentationAdapter: instrumentationAdapter,
