@@ -24,13 +24,9 @@ jobs:
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
-#       - uses: 280780363/sqlserver-action@v1.0
-#         with:
-#           accept eula: Y
-#           sa password: REL2021-mssql
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-      - name: run go test ./...
+      - name: Run go test ./...
         env:
           MSSQL_DATABASE: sqlserver://sa:REL2021-mssql@localhost:1433
         run: |
