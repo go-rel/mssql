@@ -86,7 +86,7 @@ func TestAdapter_specs(t *testing.T) {
 
 	// Constraint specs
 	// Unique and Foreign constraint is not fully supported.
-	// Because of driver bug, any error occured when inserting is treated as unique constraint error.
+	// Because of driver bug, any error occurred when inserting is treated as unique constraint error.
 	// specs.UniqueConstraintOnUpdate(t, repo)
 	specs.ForeignKeyConstraintOnUpdate(t, repo)
 	specs.CheckConstraintOnUpdate(t, repo)

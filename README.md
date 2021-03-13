@@ -8,18 +8,36 @@
 Microsoft SQL Server adapter for REL.
 
 ## Example 
-```go
-// open mssql connection.
-adapter, err := mssql.Open("sqlserver://sa:REL2021-mssql@localhost:1433?database=rel")
-if err != nil {
-	panic(err)
-}
-defer adapter.Close()
 
-// initialize REL's repo.
-repo := rel.New(adapter)
+```go
+package main
+
+import (
+	"context"
+
+	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/go-rel/mssql"
+	"github.com/go-rel/rel"
+)
+
+func main() {
+	// open mssql connection.
+	adapter, err := mssql.Open("sqlserver://sa:REL2021-mssql@localhost:1433?database=rel")
+	if err != nil {
+		panic(err)
+	}
+	defer adapter.Close()
+
+	// initialize REL's repo.
+	repo := rel.New(adapter)
+	repo.Ping(context.TODO())
+}
+
 ```
 
+## Supported Driver
+
+- github.com/denisenkom/go-mssqldb
 
 ## Supported Database
 
