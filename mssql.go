@@ -123,10 +123,8 @@ func mapColumn(column *rel.Column) (string, int, int) {
 		typ = "BIT"
 	case rel.Int:
 		typ = "INT"
-		// m = column.Limit
 	case rel.BigInt:
 		typ = "BIGINT"
-		// m = column.Limit
 	case rel.Float:
 		typ = "FLOAT"
 		m = column.Precision
@@ -135,14 +133,15 @@ func mapColumn(column *rel.Column) (string, int, int) {
 		m = column.Precision
 		n = column.Scale
 	case rel.String:
-		typ = "VARCHAR"
+		typ = "NVARCHAR"
 		m = column.Limit
 		if m == 0 {
 			m = 255
+		} else if m > 4000 {
+			m = 4000
 		}
 	case rel.Text:
-		typ = "TEXT"
-		m = column.Limit
+		typ = "NVARCHAR(MAX)"
 	case rel.Date:
 		typ = "DATE"
 		timeLayout = "2006-01-02"
