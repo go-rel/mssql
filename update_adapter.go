@@ -13,10 +13,9 @@ type UpdateAdapter struct {
 }
 
 // Update updates a record in database.
-func (ua UpdateAdapter) Update(ctx context.Context, query rel.Query, mutates map[string]rel.Mutate) (int, error) {
-	// TODO: pass primaryField from repo
+func (ua UpdateAdapter) Update(ctx context.Context, query rel.Query, primaryField string, mutates map[string]rel.Mutate) (int, error) {
 	var (
-		statement, args      = ua.updateSQL.Build(query.Table, "id", mutates, query.WhereQuery)
+		statement, args      = ua.updateSQL.Build(query.Table, primaryField, mutates, query.WhereQuery)
 		_, updatedCount, err = ua.execAdapter.Exec(ctx, statement, args)
 	)
 
