@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 // QuerySQL builder.
@@ -24,15 +23,15 @@ func (qs QuerySQL) Build(query rel.Query) (string, []interface{}) {
 		query = query.Sort("^1")
 	}
 
-	var buffer sql.Buffer
+	var buffer buffer
 	qs.BuildSelect(&buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
 	qs.BuildQuery(&buffer, query)
 
-	return buffer.String(), buffer.Arguments
+	return buffer.String(), buffer.Arguments()
 }
 
 // BuildSelect SQL to buffer.
-func (qs QuerySQL) BuildSelect(buffer *sql.Buffer, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
+func (qs QuerySQL) BuildSelect(buffer *buffer, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
 	buffer.WriteString("SELECT")
 
 	if selectQuery.OnlyDistinct {
@@ -61,7 +60,7 @@ func (qs QuerySQL) BuildSelect(buffer *sql.Buffer, selectQuery rel.SelectQuery, 
 }
 
 // BuildQuery SQL to buffer.
-func (qs QuerySQL) BuildQuery(buffer *sql.Buffer, query rel.Query) {
+func (qs QuerySQL) BuildQuery(buffer *buffer, query rel.Query) {
 	qs.BuildFrom(buffer, query.Table)
 	qs.BuildJoin(buffer, query.Table, query.JoinQuery)
 	qs.BuildWhere(buffer, query.WhereQuery)
@@ -83,13 +82,13 @@ func (qs QuerySQL) BuildQuery(buffer *sql.Buffer, query rel.Query) {
 }
 
 // BuildFrom SQL to buffer.
-func (qs QuerySQL) BuildFrom(buffer *sql.Buffer, table string) {
+func (qs QuerySQL) BuildFrom(buffer *buffer, table string) {
 	buffer.WriteString(" FROM ")
 	buffer.WriteString(qs.fieldSQL.Build(table))
 }
 
 // BuildJoin SQL to buffer.
-func (qs QuerySQL) BuildJoin(buffer *sql.Buffer, table string, joins []rel.JoinQuery) {
+func (qs QuerySQL) BuildJoin(buffer *buffer, table string, joins []rel.JoinQuery) {
 	if len(joins) == 0 {
 		return
 	}
@@ -118,12 +117,12 @@ func (qs QuerySQL) BuildJoin(buffer *sql.Buffer, table string, joins []rel.JoinQ
 			buffer.WriteString(to)
 		}
 
-		buffer.Append(join.Arguments...)
+		buffer.AddArguments(join.Arguments...)
 	}
 }
 
 // BuildWhere SQL to buffer.
-func (qs QuerySQL) BuildWhere(buffer *sql.Buffer, filter rel.FilterQuery) {
+func (qs QuerySQL) BuildWhere(buffer *buffer, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
@@ -133,7 +132,7 @@ func (qs QuerySQL) BuildWhere(buffer *sql.Buffer, filter rel.FilterQuery) {
 }
 
 // BuildGroupBy SQL to buffer.
-func (qs QuerySQL) BuildGroupBy(buffer *sql.Buffer, fields []string) {
+func (qs QuerySQL) BuildGroupBy(buffer *buffer, fields []string) {
 	buffer.WriteString(" GROUP BY ")
 
 	l := len(fields) - 1
@@ -147,7 +146,7 @@ func (qs QuerySQL) BuildGroupBy(buffer *sql.Buffer, fields []string) {
 }
 
 // BuildHaving SQL to buffer.
-func (qs QuerySQL) BuildHaving(buffer *sql.Buffer, filter rel.FilterQuery) {
+func (qs QuerySQL) BuildHaving(buffer *buffer, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
@@ -157,7 +156,7 @@ func (qs QuerySQL) BuildHaving(buffer *sql.Buffer, filter rel.FilterQuery) {
 }
 
 // BuildOrderBy SQL to buffer.
-func (qs QuerySQL) BuildOrderBy(buffer *sql.Buffer, orders []rel.SortQuery) {
+func (qs QuerySQL) BuildOrderBy(buffer *buffer, orders []rel.SortQuery) {
 	var (
 		length = len(orders)
 	)
@@ -183,7 +182,7 @@ func (qs QuerySQL) BuildOrderBy(buffer *sql.Buffer, orders []rel.SortQuery) {
 }
 
 // BuildLimitOffset SQL to buffer.
-func (qs QuerySQL) BuildLimitOffset(buffer *sql.Buffer, limit rel.Limit, offset rel.Offset) {
+func (qs QuerySQL) BuildLimitOffset(buffer *buffer, limit rel.Limit, offset rel.Offset) {
 	if limit > 0 && offset > 0 {
 		buffer.WriteString(" OFFSET ")
 		buffer.WriteString(strconv.Itoa(int(offset)))

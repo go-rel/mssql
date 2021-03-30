@@ -2,7 +2,6 @@ package mssql
 
 import (
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 // ApplyIndexSQL builder.
@@ -12,7 +11,7 @@ type ApplyIndexSQL struct {
 
 // Build sql query for index.
 func (ais ApplyIndexSQL) Build(index rel.Index) string {
-	var buffer sql.Buffer
+	var buffer buffer
 
 	switch index.Op {
 	case rel.SchemaCreate:
@@ -28,7 +27,7 @@ func (ais ApplyIndexSQL) Build(index rel.Index) string {
 }
 
 // WriteCreateIndex to buffer
-func (ais ApplyIndexSQL) WriteCreateIndex(buffer *sql.Buffer, index rel.Index) {
+func (ais ApplyIndexSQL) WriteCreateIndex(buffer *buffer, index rel.Index) {
 	buffer.WriteString("CREATE ")
 	if index.Unique {
 		buffer.WriteString("UNIQUE NONCLUSTERED ")
@@ -65,7 +64,7 @@ func (ais ApplyIndexSQL) WriteCreateIndex(buffer *sql.Buffer, index rel.Index) {
 }
 
 // WriteDropIndex to buffer
-func (ais ApplyIndexSQL) WriteDropIndex(buffer *sql.Buffer, index rel.Index) {
+func (ais ApplyIndexSQL) WriteDropIndex(buffer *buffer, index rel.Index) {
 	buffer.WriteString("DROP INDEX ")
 
 	if index.Optional {
@@ -81,7 +80,7 @@ func (ais ApplyIndexSQL) WriteDropIndex(buffer *sql.Buffer, index rel.Index) {
 }
 
 // WriteOptions sql to buffer.
-func (ais ApplyIndexSQL) WriteOptions(buffer *sql.Buffer, options string) {
+func (ais ApplyIndexSQL) WriteOptions(buffer *buffer, options string) {
 	if options == "" {
 		return
 	}

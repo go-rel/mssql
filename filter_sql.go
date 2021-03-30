@@ -2,17 +2,15 @@ package mssql
 
 import (
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 // FilterSQL builder.
 type FilterSQL struct {
-	fieldSQL    FieldSQL
-	placeholder string
+	fieldSQL FieldSQL
 }
 
 // Write SQL to buffer.
-func (fs FilterSQL) Write(buffer *sql.Buffer, filter rel.FilterQuery) {
+func (fs FilterSQL) Write(buffer *buffer, filter rel.FilterQuery) {
 	switch filter.Type {
 	case rel.FilterAndOp:
 		fs.BuildLogical(buffer, "AND", filter.Inner)
@@ -40,21 +38,19 @@ func (fs FilterSQL) Write(buffer *sql.Buffer, filter rel.FilterQuery) {
 	case rel.FilterLikeOp:
 		buffer.WriteString(fs.fieldSQL.Build(filter.Field))
 		buffer.WriteString(" LIKE ")
-		buffer.WriteString(fs.placeholder)
-		buffer.Append(filter.Value)
+		buffer.WriteValue(filter.Value)
 	case rel.FilterNotLikeOp:
 		buffer.WriteString(fs.fieldSQL.Build(filter.Field))
 		buffer.WriteString(" NOT LIKE ")
-		buffer.WriteString(fs.placeholder)
-		buffer.Append(filter.Value)
+		buffer.WriteValue(filter.Value)
 	case rel.FilterFragmentOp:
 		buffer.WriteString(filter.Field)
-		buffer.Append(filter.Value.([]interface{})...)
+		buffer.AddArguments(filter.Value.([]interface{})...)
 	}
 }
 
 // BuildLogical SQL to buffer.
-func (fs FilterSQL) BuildLogical(buffer *sql.Buffer, op string, inner []rel.FilterQuery) {
+func (fs FilterSQL) BuildLogical(buffer *buffer, op string, inner []rel.FilterQuery) {
 	var (
 		length = len(inner)
 	)
@@ -79,7 +75,7 @@ func (fs FilterSQL) BuildLogical(buffer *sql.Buffer, op string, inner []rel.Filt
 }
 
 // BuildComparison SQL to buffer.
-func (fs FilterSQL) BuildComparison(buffer *sql.Buffer, filter rel.FilterQuery) {
+func (fs FilterSQL) BuildComparison(buffer *buffer, filter rel.FilterQuery) {
 	buffer.WriteString(fs.fieldSQL.Build(filter.Field))
 
 	switch filter.Type {
@@ -97,12 +93,11 @@ func (fs FilterSQL) BuildComparison(buffer *sql.Buffer, filter rel.FilterQuery) 
 		buffer.WriteString(">=")
 	}
 
-	buffer.WriteString(fs.placeholder)
-	buffer.Append(filter.Value)
+	buffer.WriteValue(filter.Value)
 }
 
 // BuildInclusion SQL to buffer.
-func (fs FilterSQL) BuildInclusion(buffer *sql.Buffer, filter rel.FilterQuery) {
+func (fs FilterSQL) BuildInclusion(buffer *buffer, filter rel.FilterQuery) {
 	var (
 		values = filter.Value.([]interface{})
 	)
@@ -115,19 +110,18 @@ func (fs FilterSQL) BuildInclusion(buffer *sql.Buffer, filter rel.FilterQuery) {
 		buffer.WriteString(" NOT IN (")
 	}
 
-	buffer.WriteString(fs.placeholder)
-	for i := 1; i <= len(values)-1; i++ {
-		buffer.WriteByte(',')
-		buffer.WriteString(fs.placeholder)
+	for i := 0; i < len(values); i++ {
+		if i > 0 {
+			buffer.WriteByte(',')
+		}
+		buffer.WriteValue(values[i])
 	}
 	buffer.WriteByte(')')
-	buffer.Append(values...)
 }
 
 // NewFilterSQL builder.
-func NewFilterSQL(fieldSQL FieldSQL, placeholder string) FilterSQL {
+func NewFilterSQL(fieldSQL FieldSQL) FilterSQL {
 	return FilterSQL{
-		fieldSQL:    fieldSQL,
-		placeholder: placeholder,
+		fieldSQL: fieldSQL,
 	}
 }

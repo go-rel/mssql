@@ -2,20 +2,18 @@ package mssql
 
 import (
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 // UpdateSQL builder.
 type UpdateSQL struct {
-	fieldSQL    FieldSQL
-	filterSQL   FilterSQL
-	placeholder string
+	fieldSQL  FieldSQL
+	filterSQL FilterSQL
 }
 
 // Build SQL string and it arguments.
 func (us UpdateSQL) Build(table string, primaryField string, mutates map[string]rel.Mutate, filter rel.FilterQuery) (string, []interface{}) {
 	var (
-		buffer sql.Buffer
+		buffer buffer
 	)
 
 	buffer.WriteString("UPDATE ")
@@ -37,18 +35,16 @@ func (us UpdateSQL) Build(table string, primaryField string, mutates map[string]
 		case rel.ChangeSetOp:
 			buffer.WriteString(us.fieldSQL.Build(field))
 			buffer.WriteByte('=')
-			buffer.WriteString(us.placeholder)
-			buffer.Append(mut.Value)
+			buffer.WriteValue(mut.Value)
 		case rel.ChangeIncOp:
 			buffer.WriteString(us.fieldSQL.Build(field))
 			buffer.WriteByte('=')
 			buffer.WriteString(us.fieldSQL.Build(field))
 			buffer.WriteByte('+')
-			buffer.WriteString(us.placeholder)
-			buffer.Append(mut.Value)
+			buffer.WriteValue(mut.Value)
 		case rel.ChangeFragmentOp:
 			buffer.WriteString(field)
-			buffer.Append(mut.Value.([]interface{})...)
+			buffer.AddArguments(mut.Value.([]interface{})...)
 		}
 	}
 
@@ -59,14 +55,13 @@ func (us UpdateSQL) Build(table string, primaryField string, mutates map[string]
 
 	buffer.WriteString(";")
 
-	return buffer.String(), buffer.Arguments
+	return buffer.String(), buffer.Arguments()
 }
 
 // NewUpdateSQL builder.
-func NewUpdateSQL(fieldSQL FieldSQL, filterSQL FilterSQL, placeholder string) UpdateSQL {
+func NewUpdateSQL(fieldSQL FieldSQL, filterSQL FilterSQL) UpdateSQL {
 	return UpdateSQL{
-		fieldSQL:    fieldSQL,
-		filterSQL:   filterSQL,
-		placeholder: placeholder,
+		fieldSQL:  fieldSQL,
+		filterSQL: filterSQL,
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 type ColumnMapper func(*rel.Column) (string, int, int)
@@ -18,7 +17,7 @@ type ApplyTableSQL struct {
 
 // Build SQL query for table creation and modification.
 func (ats ApplyTableSQL) Build(table rel.Table) string {
-	var buffer sql.Buffer
+	var buffer buffer
 
 	switch table.Op {
 	case rel.SchemaCreate:
@@ -35,7 +34,7 @@ func (ats ApplyTableSQL) Build(table rel.Table) string {
 }
 
 // WriteCreateTable query to buffer.
-func (ats ApplyTableSQL) WriteCreateTable(buffer *sql.Buffer, table rel.Table) {
+func (ats ApplyTableSQL) WriteCreateTable(buffer *buffer, table rel.Table) {
 
 	if table.Optional {
 		buffer.WriteString("IF OBJECT_ID('")
@@ -67,7 +66,7 @@ func (ats ApplyTableSQL) WriteCreateTable(buffer *sql.Buffer, table rel.Table) {
 }
 
 // WriteAlterTable query to buffer.
-func (ats ApplyTableSQL) WriteAlterTable(buffer *sql.Buffer, table rel.Table) {
+func (ats ApplyTableSQL) WriteAlterTable(buffer *buffer, table rel.Table) {
 	for _, def := range table.Definitions {
 		if v, ok := def.(rel.Column); ok && v.Op == rel.SchemaRename {
 			buffer.WriteString("EXEC sp_rename ")
@@ -109,7 +108,7 @@ func (ats ApplyTableSQL) WriteAlterTable(buffer *sql.Buffer, table rel.Table) {
 }
 
 // WriteRenameTable query to buffer.
-func (ats ApplyTableSQL) WriteRenameTable(buffer *sql.Buffer, table rel.Table) {
+func (ats ApplyTableSQL) WriteRenameTable(buffer *buffer, table rel.Table) {
 	buffer.WriteString("EXEC sp_rename ")
 	buffer.WriteString(ats.fieldSQL.Build(table.Name))
 	buffer.WriteString(", ")
@@ -118,7 +117,7 @@ func (ats ApplyTableSQL) WriteRenameTable(buffer *sql.Buffer, table rel.Table) {
 }
 
 // WriteDropTable query to buffer.
-func (ats ApplyTableSQL) WriteDropTable(buffer *sql.Buffer, table rel.Table) {
+func (ats ApplyTableSQL) WriteDropTable(buffer *buffer, table rel.Table) {
 	if table.Optional {
 		buffer.WriteString("IF OBJECT_ID('")
 		buffer.WriteString(ats.fieldSQL.Build(table.Name))
@@ -131,7 +130,7 @@ func (ats ApplyTableSQL) WriteDropTable(buffer *sql.Buffer, table rel.Table) {
 }
 
 // WriteColumn definition to buffer.
-func (ats ApplyTableSQL) WriteColumn(buffer *sql.Buffer, column rel.Column) {
+func (ats ApplyTableSQL) WriteColumn(buffer *buffer, column rel.Column) {
 	var (
 		typ, m, n = ats.columnMapper(&column)
 	)
@@ -185,7 +184,7 @@ func (ats ApplyTableSQL) WriteColumn(buffer *sql.Buffer, column rel.Column) {
 }
 
 // WriteKey definition to buffer.
-func (ats ApplyTableSQL) WriteKey(buffer *sql.Buffer, key rel.Key) {
+func (ats ApplyTableSQL) WriteKey(buffer *buffer, key rel.Key) {
 	var (
 		typ = string(key.Type)
 	)
@@ -234,7 +233,7 @@ func (ats ApplyTableSQL) WriteKey(buffer *sql.Buffer, key rel.Key) {
 }
 
 // WriteOptions sql to buffer.
-func (ats ApplyTableSQL) WriteOptions(buffer *sql.Buffer, options string) {
+func (ats ApplyTableSQL) WriteOptions(buffer *buffer, options string) {
 	if options == "" {
 		return
 	}
