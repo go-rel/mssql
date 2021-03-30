@@ -2,7 +2,6 @@ package mssql
 
 import (
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
 )
 
 // DeleteSQL builder.
@@ -13,7 +12,7 @@ type DeleteSQL struct {
 
 // Build SQL query and its arguments.
 func (ds DeleteSQL) Build(table string, filter rel.FilterQuery) (string, []interface{}) {
-	var buffer sql.Buffer
+	var buffer buffer
 
 	buffer.WriteString("DELETE FROM ")
 	buffer.WriteString(ds.fieldSQL.Build(table))
@@ -25,7 +24,7 @@ func (ds DeleteSQL) Build(table string, filter rel.FilterQuery) (string, []inter
 
 	buffer.WriteString(";")
 
-	return buffer.String(), buffer.Arguments
+	return buffer.String(), buffer.Arguments()
 }
 
 // NewDeleteSQL builder.

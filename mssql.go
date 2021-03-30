@@ -35,9 +35,8 @@ func New(db *db.DB) Adapter {
 
 func new(db *db.DB, tx *db.Tx, savepoint int) rel.Adapter {
 	var (
-		placeholder       = "?"
 		fieldSQL          = NewFieldSQL("[", "]")
-		filterSQL         = NewFilterSQL(fieldSQL, placeholder)
+		filterSQL         = NewFilterSQL(fieldSQL)
 		querySQL          = NewQuerySQL(fieldSQL, filterSQL)
 		instrumentation   = NewInstrumentationAdapter()
 		connectionAdapter = NewConnectionAdapter(instrumentation, db, tx, savepoint, new)
@@ -45,9 +44,9 @@ func new(db *db.DB, tx *db.Tx, savepoint int) rel.Adapter {
 		queryAdapter      = NewQueryAdapter(connectionAdapter, querySQL, mapError)
 		aggregateAdapter  = NewAggregateAdapter(connectionAdapter, querySQL)
 		applyAdapter      = NewApplyAdapter(execAdapter, NewApplyTableSQL(fieldSQL, mapColumn), NewApplyIndexSQL(fieldSQL))
-		insertAdapter     = NewInsertAdapter(connectionAdapter, NewInsertSQL(fieldSQL, placeholder))
-		insertAllAdapter  = NewInsertAllAdapter(connectionAdapter, NewInsertAllSQL(fieldSQL, placeholder))
-		updateAdapter     = NewUpdateAdapter(execAdapter, NewUpdateSQL(fieldSQL, filterSQL, placeholder))
+		insertAdapter     = NewInsertAdapter(connectionAdapter, NewInsertSQL(fieldSQL))
+		insertAllAdapter  = NewInsertAllAdapter(connectionAdapter, NewInsertAllSQL(fieldSQL))
+		updateAdapter     = NewUpdateAdapter(execAdapter, NewUpdateSQL(fieldSQL, filterSQL))
 		deleteAdapter     = NewDeleteAdapter(execAdapter, NewDeleteSQL(fieldSQL, filterSQL))
 	)
 
@@ -67,7 +66,7 @@ func new(db *db.DB, tx *db.Tx, savepoint int) rel.Adapter {
 
 // Open mssql connection using dsn.
 func Open(dsn string) (Adapter, error) {
-	var database, err = db.Open("mssql", dsn)
+	var database, err = db.Open("sqlserver", dsn)
 	return New(database), err
 }
 
