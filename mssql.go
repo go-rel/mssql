@@ -151,8 +151,6 @@ func mapColumn(column *rel.Column) (string, int, int) {
 	case rel.Time:
 		typ = "TIME"
 		timeLayout = "15:04:05"
-	case rel.Timestamp:
-		typ = "TIMESTAMP"
 	default:
 		typ = string(column.Type)
 	}
