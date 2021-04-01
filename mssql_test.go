@@ -38,7 +38,6 @@ func TestAdapter_specs(t *testing.T) {
 	// Query Specs
 	specs.Query(t, repo)
 	specs.QueryJoin(t, repo)
-	specs.QueryWhereSubQuery(t, repo)
 	specs.QueryNotFound(t, repo)
 
 	// Preload specs
