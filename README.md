@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/go-rel/mssql?status.svg)](https://pkg.go.dev/github.com/go-rel/mssql)
 [![Integration](https://github.com/go-rel/mssql/actions/workflows/integration.yml/badge.svg?branch=main)](https://github.com/go-rel/mssql/actions/workflows/integration.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-rel/mssql)](https://goreportcard.com/report/github.com/go-rel/mssql)
+[![codecov](https://codecov.io/gh/go-rel/mssql/branch/main/graph/badge.svg?token=3VBLHCCG4N)](https://codecov.io/gh/go-rel/mssql)
 [![Gitter chat](https://badges.gitter.im/go-rel/rel.png)](https://gitter.im/go-rel/rel)
 
 Microsoft SQL Server adapter for REL.
