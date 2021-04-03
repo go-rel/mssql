@@ -31,4 +31,7 @@ jobs:
           MSSQL_DATABASE: sqlserver://sa:REL2021-mssql@localhost:1433
         run: |
           sleep 15
-          go test -race ./...
+          go test -race -tags=all -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+        if: matrix.mssql == '2019'
