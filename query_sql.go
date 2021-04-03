@@ -15,19 +15,27 @@ type QuerySQL struct {
 
 // Build SQL string and it arguments.
 func (qs QuerySQL) Build(query rel.Query) (string, []interface{}) {
+	var buffer buffer
+	qs.Write(&buffer, query)
+	buffer.WriteString(";")
+
+	return buffer.String(), buffer.Arguments()
+}
+
+// Write SQL to buffer.
+func (qs QuerySQL) Write(buffer *buffer, query rel.Query) {
 	if query.SQLQuery.Statement != "" {
-		return query.SQLQuery.Statement, query.SQLQuery.Values
+		buffer.WriteString(query.SQLQuery.Statement)
+		buffer.AddArguments(query.SQLQuery.Values...)
+		return
 	}
 
 	if len(query.SortQuery) == 0 && query.OffsetQuery > 0 && query.LimitQuery > 0 {
 		query = query.Sort("^1")
 	}
 
-	var buffer buffer
-	qs.BuildSelect(&buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
-	qs.BuildQuery(&buffer, query)
-
-	return buffer.String(), buffer.Arguments()
+	qs.BuildSelect(buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
+	qs.BuildQuery(buffer, query)
 }
 
 // BuildSelect SQL to buffer.
@@ -77,8 +85,6 @@ func (qs QuerySQL) BuildQuery(buffer *buffer, query rel.Query) {
 		buffer.WriteByte(' ')
 		buffer.WriteString(string(query.LockQuery))
 	}
-
-	buffer.WriteString(";")
 }
 
 // BuildFrom SQL to buffer.
@@ -128,7 +134,7 @@ func (qs QuerySQL) BuildWhere(buffer *buffer, filter rel.FilterQuery) {
 	}
 
 	buffer.WriteString(" WHERE ")
-	qs.filterSQL.Write(buffer, filter)
+	qs.filterSQL.Write(buffer, filter, qs)
 }
 
 // BuildGroupBy SQL to buffer.
@@ -152,7 +158,7 @@ func (qs QuerySQL) BuildHaving(buffer *buffer, filter rel.FilterQuery) {
 	}
 
 	buffer.WriteString(" HAVING ")
-	qs.filterSQL.Write(buffer, filter)
+	qs.filterSQL.Write(buffer, filter, qs)
 }
 
 // BuildOrderBy SQL to buffer.
