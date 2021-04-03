@@ -7,6 +7,7 @@ import (
 // UpdateSQL builder.
 type UpdateSQL struct {
 	fieldSQL  FieldSQL
+	querySQL  QuerySQL
 	filterSQL FilterSQL
 }
 
@@ -50,7 +51,7 @@ func (us UpdateSQL) Build(table string, primaryField string, mutates map[string]
 
 	if !filter.None() {
 		buffer.WriteString(" WHERE ")
-		us.filterSQL.Write(&buffer, filter)
+		us.filterSQL.Write(&buffer, filter, us.querySQL)
 	}
 
 	buffer.WriteString(";")
@@ -59,9 +60,10 @@ func (us UpdateSQL) Build(table string, primaryField string, mutates map[string]
 }
 
 // NewUpdateSQL builder.
-func NewUpdateSQL(fieldSQL FieldSQL, filterSQL FilterSQL) UpdateSQL {
+func NewUpdateSQL(fieldSQL FieldSQL, querySQL QuerySQL, filterSQL FilterSQL) UpdateSQL {
 	return UpdateSQL{
 		fieldSQL:  fieldSQL,
+		querySQL:  querySQL,
 		filterSQL: filterSQL,
 	}
 }

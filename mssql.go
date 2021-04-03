@@ -46,8 +46,8 @@ func new(db *db.DB, tx *db.Tx, savepoint int) rel.Adapter {
 		applyAdapter      = NewApplyAdapter(execAdapter, NewApplyTableSQL(fieldSQL, mapColumn), NewApplyIndexSQL(fieldSQL))
 		insertAdapter     = NewInsertAdapter(connectionAdapter, NewInsertSQL(fieldSQL))
 		insertAllAdapter  = NewInsertAllAdapter(connectionAdapter, NewInsertAllSQL(fieldSQL))
-		updateAdapter     = NewUpdateAdapter(execAdapter, NewUpdateSQL(fieldSQL, filterSQL))
-		deleteAdapter     = NewDeleteAdapter(execAdapter, NewDeleteSQL(fieldSQL, filterSQL))
+		updateAdapter     = NewUpdateAdapter(execAdapter, NewUpdateSQL(fieldSQL, querySQL, filterSQL))
+		deleteAdapter     = NewDeleteAdapter(execAdapter, NewDeleteSQL(fieldSQL, querySQL, filterSQL))
 	)
 
 	return Adapter{

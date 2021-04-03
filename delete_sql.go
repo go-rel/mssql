@@ -7,6 +7,7 @@ import (
 // DeleteSQL builder.
 type DeleteSQL struct {
 	fieldSQL  FieldSQL
+	querySQL  QuerySQL
 	filterSQL FilterSQL
 }
 
@@ -19,7 +20,7 @@ func (ds DeleteSQL) Build(table string, filter rel.FilterQuery) (string, []inter
 
 	if !filter.None() {
 		buffer.WriteString(" WHERE ")
-		ds.filterSQL.Write(&buffer, filter)
+		ds.filterSQL.Write(&buffer, filter, ds.querySQL)
 	}
 
 	buffer.WriteString(";")
@@ -28,9 +29,10 @@ func (ds DeleteSQL) Build(table string, filter rel.FilterQuery) (string, []inter
 }
 
 // NewDeleteSQL builder.
-func NewDeleteSQL(fieldSQL FieldSQL, filterSQL FilterSQL) DeleteSQL {
+func NewDeleteSQL(fieldSQL FieldSQL, querySQL QuerySQL, filterSQL FilterSQL) DeleteSQL {
 	return DeleteSQL{
 		fieldSQL:  fieldSQL,
+		querySQL:  querySQL,
 		filterSQL: filterSQL,
 	}
 }
