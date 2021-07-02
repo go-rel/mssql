@@ -76,7 +76,7 @@ func TestAdapter_specs(t *testing.T) {
 	specs.UpdateBelongsToUpdate(t, repo)
 	specs.UpdateAtomic(t, repo)
 	specs.Updates(t, repo)
-	specs.UpdateAll(t, repo)
+	specs.UpdateAny(t, repo)
 
 	// Delete specs
 	specs.Delete(t, repo)
@@ -84,6 +84,7 @@ func TestAdapter_specs(t *testing.T) {
 	specs.DeleteHasOne(t, repo)
 	specs.DeleteHasMany(t, repo)
 	specs.DeleteAll(t, repo)
+	specs.DeleteAny(t, repo)
 
 	// Constraint specs
 	// Unique and Foreign constraint is not fully supported.
