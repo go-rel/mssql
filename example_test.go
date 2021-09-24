@@ -15,7 +15,7 @@ func TestExample(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	defer adapter.Close()
+	defer adapter.(*mssql.MSSQL).Close()
 
 	// initialize REL's repo.
 	repo := rel.New(adapter)

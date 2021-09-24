@@ -18,13 +18,13 @@ func dsn() string {
 		return os.Getenv("MSSQL_DATABASE")
 	}
 
-	return "sqlserver://sa:REL2021-mssql@localhost:1433?database=rel&log=32"
+	return "sqlserver://sa:REL2021-mssql@localhost:1433"
 }
 
 func TestAdapter_specs(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.Close()
+	defer adapter.(*MSSQL).Close()
 
 	repo := rel.New(adapter)
 
@@ -98,20 +98,20 @@ func TestAdapter_Open(t *testing.T) {
 	// with parameter
 	assert.NotPanics(t, func() {
 		adapter, _ := Open("root@tcp(localhost:3306)/rel_test?charset=utf8")
-		defer adapter.Close()
+		defer adapter.(*MSSQL).Close()
 	})
 
 	// without paremeter
 	assert.NotPanics(t, func() {
 		adapter, _ := Open("root@tcp(localhost:3306)/rel_test")
-		defer adapter.Close()
+		defer adapter.(*MSSQL).Close()
 	})
 }
 
 func TestAdapter_Transaction_commitError(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.Close()
+	defer adapter.(*MSSQL).Close()
 
 	assert.NotNil(t, adapter.Commit(ctx))
 }
@@ -119,7 +119,7 @@ func TestAdapter_Transaction_commitError(t *testing.T) {
 func TestAdapter_Transaction_rollbackError(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.Close()
+	defer adapter.(*MSSQL).Close()
 
 	assert.NotNil(t, adapter.Rollback(ctx))
 }
@@ -127,7 +127,7 @@ func TestAdapter_Transaction_rollbackError(t *testing.T) {
 func TestAdapter_Exec_error(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.Close()
+	defer adapter.(*MSSQL).Close()
 
 	_, _, err = adapter.Exec(ctx, "error", nil)
 	assert.NotNil(t, err)

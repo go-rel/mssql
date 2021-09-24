@@ -1,33 +1,36 @@
-package mssql
+package builder
 
 import (
 	"github.com/go-rel/rel"
+	"github.com/go-rel/sql/builder"
 )
 
-// ApplyIndexSQL builder.
-type ApplyIndexSQL struct {
-	fieldSQL FieldSQL
+// Index builder.
+type Index struct {
+	BufferFactory builder.BufferFactory
 }
 
 // Build sql query for index.
-func (ais ApplyIndexSQL) Build(index rel.Index) string {
-	var buffer buffer
+func (i Index) Build(index rel.Index) string {
+	var (
+		buffer = i.BufferFactory.Create()
+	)
 
 	switch index.Op {
 	case rel.SchemaCreate:
-		ais.WriteCreateIndex(&buffer, index)
+		i.WriteCreateIndex(&buffer, index)
 	case rel.SchemaDrop:
-		ais.WriteDropIndex(&buffer, index)
+		i.WriteDropIndex(&buffer, index)
 	}
 
-	ais.WriteOptions(&buffer, index.Options)
+	i.WriteOptions(&buffer, index.Options)
 	buffer.WriteByte(';')
 
 	return buffer.String()
 }
 
 // WriteCreateIndex to buffer
-func (ais ApplyIndexSQL) WriteCreateIndex(buffer *buffer, index rel.Index) {
+func (i Index) WriteCreateIndex(buffer *builder.Buffer, index rel.Index) {
 	buffer.WriteString("CREATE ")
 	if index.Unique {
 		buffer.WriteString("UNIQUE NONCLUSTERED ")
@@ -38,16 +41,16 @@ func (ais ApplyIndexSQL) WriteCreateIndex(buffer *buffer, index rel.Index) {
 		buffer.WriteString("IF NOT EXISTS ")
 	}
 
-	buffer.WriteString(ais.fieldSQL.Build(index.Name))
+	buffer.WriteEscape(index.Name)
 	buffer.WriteString(" ON ")
-	buffer.WriteString(ais.fieldSQL.Build(index.Table))
+	buffer.WriteEscape(index.Table)
 
 	buffer.WriteString(" (")
 	for i, col := range index.Columns {
 		if i > 0 {
 			buffer.WriteString(", ")
 		}
-		buffer.WriteString(ais.fieldSQL.Build(col))
+		buffer.WriteEscape(col)
 	}
 	buffer.WriteString(")")
 
@@ -57,41 +60,31 @@ func (ais ApplyIndexSQL) WriteCreateIndex(buffer *buffer, index rel.Index) {
 			if i > 0 {
 				buffer.WriteString(" AND ")
 			}
-			buffer.WriteString(ais.fieldSQL.Build(col))
+			buffer.WriteEscape(col)
 			buffer.WriteString(" IS NOT NULL")
 		}
 	}
 }
 
 // WriteDropIndex to buffer
-func (ais ApplyIndexSQL) WriteDropIndex(buffer *buffer, index rel.Index) {
+func (i Index) WriteDropIndex(buffer *builder.Buffer, index rel.Index) {
 	buffer.WriteString("DROP INDEX ")
 
 	if index.Optional {
 		buffer.WriteString("IF EXISTS ")
 	}
 
-	buffer.WriteString(ais.fieldSQL.Build(index.Name))
-
-	// if a.config.DropIndexOnTable {
+	buffer.WriteEscape(index.Name)
 	buffer.WriteString(" ON ")
-	buffer.WriteString(ais.fieldSQL.Build(index.Table))
-	// }
+	buffer.WriteEscape(index.Table)
 }
 
 // WriteOptions sql to buffer.
-func (ais ApplyIndexSQL) WriteOptions(buffer *buffer, options string) {
+func (i Index) WriteOptions(buffer *builder.Buffer, options string) {
 	if options == "" {
 		return
 	}
 
 	buffer.WriteByte(' ')
 	buffer.WriteString(options)
-}
-
-// NewApplyIndexSQL builder.
-func NewApplyIndexSQL(fieldSQL FieldSQL) ApplyIndexSQL {
-	return ApplyIndexSQL{
-		fieldSQL: fieldSQL,
-	}
 }
