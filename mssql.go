@@ -13,6 +13,7 @@ import (
 	"github.com/go-rel/sql/builder"
 )
 
+// MSSQL Adapter.
 type MSSQL struct {
 	sql.SQL
 }
