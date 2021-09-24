@@ -50,12 +50,12 @@ func (i Insert) Build(table string, primaryField string, mutates map[string]rel.
 
 	buffer.WriteString(" VALUES (")
 
-	for i := range arguments {
-		if i > 0 {
+	for index := range arguments {
+		if index > 0 {
 			buffer.WriteByte(',')
 		}
 
-		buffer.WriteValue(arguments[i])
+		buffer.WriteValue(arguments[index])
 	}
 
 	buffer.WriteString(");")

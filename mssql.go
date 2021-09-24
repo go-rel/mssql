@@ -21,6 +21,15 @@ var (
 	_ rel.Adapter = (*MSSQL)(nil)
 )
 
+// Begin begins a new transaction.
+func (m MSSQL) Begin(ctx context.Context) (rel.Adapter, error) {
+	var (
+		txSql, err = m.SQL.Begin(ctx)
+	)
+
+	return &MSSQL{SQL: *txSql.(*sql.SQL)}, err
+}
+
 // Insert inserts a record to database and returns its id.
 func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string, mutates map[string]rel.Mutate) (interface{}, error) {
 	var (
@@ -41,7 +50,6 @@ func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string,
 			Err:  err,
 		}
 	}
-
 	return id, err
 }
 
