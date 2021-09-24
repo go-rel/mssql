@@ -94,46 +94,6 @@ func (q Query) BuildQuery(buffer *builder.Buffer, query rel.Query) {
 	}
 }
 
-// // BuildFrom SQL to buffer.
-// func (q Query) BuildFrom(buffer *builder.Buffer, table string) {
-// 	buffer.WriteString(" FROM ")
-// 	buffer.WriteString(q.fieldSQL.Build(table))
-// }
-
-// BuildJoin SQL to buffer.
-// func (q Query) BuildJoin(buffer *builder.Buffer, table string, joins []rel.JoinQuery) {
-// 	if len(joins) == 0 {
-// 		return
-// 	}
-
-// 	for _, join := range joins {
-// 		var (
-// 			from = q.fieldSQL.Build(join.From)
-// 			to   = q.fieldSQL.Build(join.To)
-// 		)
-
-// 		// TODO: move this to core functionality, and infer join condition using assoc data.
-// 		if join.Arguments == nil && (join.From == "" || join.To == "") {
-// 			from = q.fieldSQL.Build(table + "." + strings.TrimSuffix(join.Table, "s") + "_id")
-// 			to = q.fieldSQL.Build(join.Table + ".id")
-// 		}
-
-// 		buffer.WriteByte(' ')
-// 		buffer.WriteString(join.Mode)
-// 		buffer.WriteByte(' ')
-
-// 		if join.Table != "" {
-// 			buffer.WriteString(q.fieldSQL.Build(join.Table))
-// 			buffer.WriteString(" ON ")
-// 			buffer.WriteString(from)
-// 			buffer.WriteString("=")
-// 			buffer.WriteString(to)
-// 		}
-
-// 		buffer.AddArguments(join.Arguments...)
-// 	}
-// }
-
 // BuildWhere SQL to buffer.
 func (q Query) BuildWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
 	if filter.None() {
@@ -144,20 +104,6 @@ func (q Query) BuildWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
 	q.Filter.Write(buffer, filter, q)
 }
 
-// // BuildGroupBy SQL to buffer.
-// func (q Query) BuildGroupBy(buffer *builder.Buffer, fields []string) {
-// 	buffer.WriteString(" GROUP BY ")
-
-// 	l := len(fields) - 1
-// 	for i, f := range fields {
-// 		buffer.WriteString(q.fieldSQL.Build(f))
-
-// 		if i < l {
-// 			buffer.WriteByte(',')
-// 		}
-// 	}
-// }
-
 // BuildHaving SQL to buffer.
 func (q Query) BuildHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
 	if filter.None() {
@@ -167,32 +113,6 @@ func (q Query) BuildHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
 	buffer.WriteString(" HAVING ")
 	q.Filter.Write(buffer, filter, q)
 }
-
-// BuildOrderBy SQL to buffer.
-// func (q Query) BuildOrderBy(buffer *builder.Buffer, orders []rel.SortQuery) {
-// 	var (
-// 		length = len(orders)
-// 	)
-
-// 	if length == 0 {
-// 		return
-// 	}
-
-// 	buffer.WriteString(" ORDER BY ")
-// 	for i, order := range orders {
-// 		buffer.WriteString(q.fieldSQL.Build(order.Field))
-
-// 		if order.Asc() {
-// 			buffer.WriteString(" ASC")
-// 		} else {
-// 			buffer.WriteString(" DESC")
-// 		}
-
-// 		if i < length-1 {
-// 			buffer.WriteByte(',')
-// 		}
-// 	}
-// }
 
 // BuildLimitOffset SQL to buffer.
 func (q Query) BuildLimitOffset(buffer *builder.Buffer, limit rel.Limit, offset rel.Offset) {
