@@ -1,30 +1,31 @@
-package mssql
+package builder
 
 import (
 	"github.com/go-rel/rel"
+	"github.com/go-rel/sql/builder"
 )
 
-// InsertSQL builder.
-type InsertSQL struct {
-	fieldSQL FieldSQL
+// Insert builder.
+type Insert struct {
+	BufferFactory builder.BufferFactory
 }
 
 // Build sql query and its arguments.
-func (is InsertSQL) Build(table string, primaryField string, mutates map[string]rel.Mutate) (string, []interface{}) {
+func (i Insert) Build(table string, primaryField string, mutates map[string]rel.Mutate) (string, []interface{}) {
 	var (
-		buffer            buffer
+		buffer            = i.BufferFactory.Create()
 		_, identityInsert = mutates[primaryField]
-		arguments         = make([]interface{}, len(mutates))
+		arguments         = make([]interface{}, 0, len(mutates))
 	)
 
 	if identityInsert {
 		buffer.WriteString("SET IDENTITY_INSERT ")
-		buffer.WriteString(is.fieldSQL.Build(table))
+		buffer.WriteEscape(table)
 		buffer.WriteString(" ON; ")
 	}
 
 	buffer.WriteString("INSERT INTO ")
-	buffer.WriteString(is.fieldSQL.Build(table))
+	buffer.WriteEscape(table)
 	buffer.WriteString(" (")
 
 	index := 0
@@ -34,8 +35,8 @@ func (is InsertSQL) Build(table string, primaryField string, mutates map[string]
 				buffer.WriteByte(',')
 			}
 
-			buffer.WriteString(is.fieldSQL.Build(field))
-			arguments[index] = mut.Value
+			buffer.WriteEscape(field)
+			arguments = append(arguments, mut.Value)
 			index++
 		}
 	}
@@ -44,33 +45,26 @@ func (is InsertSQL) Build(table string, primaryField string, mutates map[string]
 
 	if primaryField != "" {
 		buffer.WriteString(" OUTPUT [INSERTED].")
-		buffer.WriteString(is.fieldSQL.Build(primaryField))
+		buffer.WriteEscape(primaryField)
 	}
 
 	buffer.WriteString(" VALUES (")
 
-	for i := range arguments {
-		if i > 0 {
+	for index := range arguments {
+		if index > 0 {
 			buffer.WriteByte(',')
 		}
 
-		buffer.WriteValue(arguments[i])
+		buffer.WriteValue(arguments[index])
 	}
 
 	buffer.WriteString(");")
 
 	if identityInsert {
 		buffer.WriteString(" SET IDENTITY_INSERT ")
-		buffer.WriteString(is.fieldSQL.Build(table))
+		buffer.WriteEscape(table)
 		buffer.WriteString(" OFF; ")
 	}
 
 	return buffer.String(), buffer.Arguments()
-}
-
-// NewInsertSQL builder.
-func NewInsertSQL(fieldSQL FieldSQL) InsertSQL {
-	return InsertSQL{
-		fieldSQL: fieldSQL,
-	}
 }

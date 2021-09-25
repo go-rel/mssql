@@ -1,18 +1,19 @@
-package mssql
+package builder
 
 import (
 	"github.com/go-rel/rel"
+	"github.com/go-rel/sql/builder"
 )
 
-// InsertAllSQL builder.
-type InsertAllSQL struct {
-	fieldSQL FieldSQL
+// InsertAll builder.
+type InsertAll struct {
+	BufferFactory builder.BufferFactory
 }
 
 // Build SQL string and its arguments.
-func (ias InsertAllSQL) Build(table string, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate) (string, []interface{}) {
+func (ia InsertAll) Build(table string, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate) (string, []interface{}) {
 	var (
-		buffer         buffer
+		buffer         = ia.BufferFactory.Create()
 		mutatesCount   = len(bulkMutates)
 		identityInsert = false
 	)
@@ -26,12 +27,12 @@ func (ias InsertAllSQL) Build(table string, primaryField string, fields []string
 
 	if identityInsert {
 		buffer.WriteString("SET IDENTITY_INSERT ")
-		buffer.WriteString(ias.fieldSQL.Build(table))
+		buffer.WriteEscape(table)
 		buffer.WriteString(" ON; ")
 	}
 
 	buffer.WriteString("INSERT INTO ")
-	buffer.WriteString(ias.fieldSQL.Build(table))
+	buffer.WriteEscape(table)
 	buffer.WriteString(" (")
 
 	for i := range fields {
@@ -39,14 +40,14 @@ func (ias InsertAllSQL) Build(table string, primaryField string, fields []string
 			buffer.WriteByte(',')
 		}
 
-		buffer.WriteString(ias.fieldSQL.Build(fields[i]))
+		buffer.WriteEscape(fields[i])
 	}
 
 	buffer.WriteString(")")
 
 	if primaryField != "" {
 		buffer.WriteString(" OUTPUT [INSERTED].")
-		buffer.WriteString(ias.fieldSQL.Build(primaryField))
+		buffer.WriteEscape(primaryField)
 	}
 
 	buffer.WriteString(" VALUES ")
@@ -76,16 +77,9 @@ func (ias InsertAllSQL) Build(table string, primaryField string, fields []string
 
 	if identityInsert {
 		buffer.WriteString(" SET IDENTITY_INSERT ")
-		buffer.WriteString(ias.fieldSQL.Build(table))
+		buffer.WriteEscape(table)
 		buffer.WriteString(" OFF; ")
 	}
 
 	return buffer.String(), buffer.Arguments()
-}
-
-// NewInsertAllSQL builder.
-func NewInsertAllSQL(fieldSQL FieldSQL) InsertAllSQL {
-	return InsertAllSQL{
-		fieldSQL: fieldSQL,
-	}
 }

@@ -2,75 +2,122 @@
 package mssql
 
 import (
+	"context"
 	db "database/sql"
 	"strings"
 	"time"
 
+	mssqlbuilder "github.com/go-rel/mssql/builder"
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/sql"
+	"github.com/go-rel/sql"
+	"github.com/go-rel/sql/builder"
 )
 
-// Adapter definition for mssql database.
-type Adapter struct {
-	*InstrumentationAdapter
-	ConnectionAdapter
-	ExecAdapter
-	QueryAdapter
-	AggregateAdapter
-	ApplyAdapter
-	InsertAdapter
-	InsertAllAdapter
-	UpdateAdapter
-	DeleteAdapter
+// MSSQL Adapter.
+type MSSQL struct {
+	sql.SQL
 }
 
 var (
-	_ rel.Adapter = (*Adapter)(nil)
+	_ rel.Adapter = (*MSSQL)(nil)
 )
 
-// New mssql adapter using existing connection.
-func New(db *db.DB) Adapter {
-	return new(db, nil, 0).(Adapter)
-}
-
-func new(db *db.DB, tx *db.Tx, savepoint int) rel.Adapter {
+// Begin begins a new transaction.
+func (m MSSQL) Begin(ctx context.Context) (rel.Adapter, error) {
 	var (
-		fieldSQL          = NewFieldSQL("[", "]")
-		filterSQL         = NewFilterSQL(fieldSQL)
-		querySQL          = NewQuerySQL(fieldSQL, filterSQL)
-		instrumentation   = NewInstrumentationAdapter()
-		connectionAdapter = NewConnectionAdapter(instrumentation, db, tx, savepoint, new)
-		execAdapter       = NewExecAdapter(connectionAdapter, mapError)
-		queryAdapter      = NewQueryAdapter(connectionAdapter, querySQL, mapError)
-		aggregateAdapter  = NewAggregateAdapter(connectionAdapter, querySQL)
-		applyAdapter      = NewApplyAdapter(execAdapter, NewApplyTableSQL(fieldSQL, mapColumn), NewApplyIndexSQL(fieldSQL))
-		insertAdapter     = NewInsertAdapter(connectionAdapter, NewInsertSQL(fieldSQL))
-		insertAllAdapter  = NewInsertAllAdapter(connectionAdapter, NewInsertAllSQL(fieldSQL))
-		updateAdapter     = NewUpdateAdapter(execAdapter, NewUpdateSQL(fieldSQL, querySQL, filterSQL))
-		deleteAdapter     = NewDeleteAdapter(execAdapter, NewDeleteSQL(fieldSQL, querySQL, filterSQL))
+		txSql, err = m.SQL.Begin(ctx)
 	)
 
-	return Adapter{
-		InstrumentationAdapter: instrumentation,
-		ConnectionAdapter:      connectionAdapter,
-		ExecAdapter:            execAdapter,
-		QueryAdapter:           queryAdapter,
-		AggregateAdapter:       aggregateAdapter,
-		ApplyAdapter:           applyAdapter,
-		InsertAdapter:          insertAdapter,
-		InsertAllAdapter:       insertAllAdapter,
-		UpdateAdapter:          updateAdapter,
-		DeleteAdapter:          deleteAdapter,
+	return &MSSQL{SQL: *txSql.(*sql.SQL)}, err
+}
+
+// Insert inserts a record to database and returns its id.
+func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string, mutates map[string]rel.Mutate) (interface{}, error) {
+	var (
+		id              int64
+		statement, args = m.InsertBuilder.Build(query.Table, primaryField, mutates)
+		rows, err       = m.DoQuery(ctx, statement, args)
+	)
+
+	defer rows.Close()
+	if err == nil && rows.Next() {
+		rows.Scan(&id)
+	}
+
+	// hack for go-mssqldb driver which doesn't return unique error correctly.
+	if primaryField != "" && id == 0 {
+		return id, rel.ConstraintError{
+			Type: rel.UniqueConstraint,
+			Err:  err,
+		}
+	}
+	return id, err
+}
+
+// InsertAll inserts multiple records to database and returns its ids.
+func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate) ([]interface{}, error) {
+	var (
+		ids             []interface{}
+		statement, args = m.InsertAllBuilder.Build(query.Table, primaryField, fields, bulkMutates)
+		rows, err       = m.DoQuery(ctx, statement, args)
+	)
+
+	defer rows.Close()
+	if err == nil {
+		for rows.Next() {
+			var id int64
+			rows.Scan(&id)
+			ids = append(ids, id)
+		}
+	}
+
+	// hack for go-mssqldb driver which doesn't return unique error correctly.
+	if primaryField != "" && len(ids) == 0 {
+		return ids, rel.ConstraintError{
+			Type: rel.UniqueConstraint,
+			Err:  err,
+		}
+	}
+
+	return ids, err
+}
+
+// New mssql adapter using existing connection.
+func New(db *db.DB) rel.Adapter {
+	var (
+		bufferFactory    = builder.BufferFactory{ArgumentPlaceholder: "@p", ArgumentOrdinal: true, EscapePrefix: "[", EscapeSuffix: "]"}
+		filterBuilder    = builder.Filter{}
+		queryBuilder     = mssqlbuilder.Query{Query: builder.Query{BufferFactory: bufferFactory, Filter: filterBuilder}}
+		InsertBuilder    = mssqlbuilder.Insert{BufferFactory: bufferFactory}
+		insertAllBuilder = mssqlbuilder.InsertAll{BufferFactory: bufferFactory}
+		updateBuilder    = builder.Update{BufferFactory: bufferFactory, Query: queryBuilder, Filter: filterBuilder}
+		deleteBuilder    = builder.Delete{BufferFactory: bufferFactory, Query: queryBuilder, Filter: filterBuilder}
+		tableBuilder     = mssqlbuilder.Table{BufferFactory: bufferFactory, ColumnMapper: columnMapper}
+		indexBuilder     = mssqlbuilder.Index{BufferFactory: bufferFactory}
+	)
+
+	return &MSSQL{
+		SQL: sql.SQL{
+			QueryBuilder:     queryBuilder,
+			InsertBuilder:    InsertBuilder,
+			InsertAllBuilder: insertAllBuilder,
+			UpdateBuilder:    updateBuilder,
+			DeleteBuilder:    deleteBuilder,
+			TableBuilder:     tableBuilder,
+			IndexBuilder:     indexBuilder,
+			ErrorMapper:      errorMapper,
+			DB:               db,
+		},
 	}
 }
 
 // Open mssql connection using dsn.
-func Open(dsn string) (Adapter, error) {
+func Open(dsn string) (rel.Adapter, error) {
 	var database, err = db.Open("sqlserver", dsn)
 	return New(database), err
 }
 
-func mapError(err error) error {
+func errorMapper(err error) error {
 	if err == nil {
 		return nil
 	}
@@ -107,8 +154,8 @@ func mapError(err error) error {
 	}
 }
 
-// mapColumn func.
-func mapColumn(column *rel.Column) (string, int, int) {
+// columnMapper function.
+func columnMapper(column *rel.Column) (string, int, int) {
 	var (
 		typ        string
 		m, n       int
