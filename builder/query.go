@@ -37,16 +37,16 @@ func (q Query) Write(buffer *builder.Buffer, query rel.Query) {
 
 	rootQuery := buffer.Len() == 0
 
-	q.BuildSelect(buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
-	q.BuildQuery(buffer, query)
+	q.WriteSelect(buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
+	q.WriteQuery(buffer, query)
 
 	if rootQuery {
 		buffer.WriteByte(';')
 	}
 }
 
-// BuildSelect SQL to buffer.
-func (q Query) BuildSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
+// WriteSelect SQL to buffer.
+func (q Query) WriteSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
 	buffer.WriteString("SELECT")
 
 	if selectQuery.OnlyDistinct {
@@ -74,19 +74,19 @@ func (q Query) BuildSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, 
 	}
 }
 
-// BuildQuery SQL to buffer.
-func (q Query) BuildQuery(buffer *builder.Buffer, query rel.Query) {
-	q.BuildFrom(buffer, query.Table)
-	q.BuildJoin(buffer, query.Table, query.JoinQuery)
-	q.BuildWhere(buffer, query.WhereQuery)
+// WriteQuery SQL to buffer.
+func (q Query) WriteQuery(buffer *builder.Buffer, query rel.Query) {
+	q.WriteFrom(buffer, query.Table)
+	q.WriteJoin(buffer, query.Table, query.JoinQuery)
+	q.WriteWhere(buffer, query.WhereQuery)
 
 	if len(query.GroupQuery.Fields) > 0 {
-		q.BuildGroupBy(buffer, query.GroupQuery.Fields)
-		q.BuildHaving(buffer, query.GroupQuery.Filter)
+		q.WriteGroupBy(buffer, query.GroupQuery.Fields)
+		q.WriteHaving(buffer, query.GroupQuery.Filter)
 	}
 
-	q.BuildOrderBy(buffer, query.SortQuery)
-	q.BuildLimitOffset(buffer, query.LimitQuery, query.OffsetQuery)
+	q.WriteOrderBy(buffer, query.SortQuery)
+	q.WriteLimitOffet(buffer, query.LimitQuery, query.OffsetQuery)
 
 	if query.LockQuery != "" {
 		buffer.WriteByte(' ')
@@ -94,8 +94,8 @@ func (q Query) BuildQuery(buffer *builder.Buffer, query rel.Query) {
 	}
 }
 
-// BuildWhere SQL to buffer.
-func (q Query) BuildWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
+// WriteWhere SQL to buffer.
+func (q Query) WriteWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
@@ -104,8 +104,8 @@ func (q Query) BuildWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
 	q.Filter.Write(buffer, filter, q)
 }
 
-// BuildHaving SQL to buffer.
-func (q Query) BuildHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
+// WriteHaving SQL to buffer.
+func (q Query) WriteHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
@@ -114,8 +114,8 @@ func (q Query) BuildHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
 	q.Filter.Write(buffer, filter, q)
 }
 
-// BuildLimitOffset SQL to buffer.
-func (q Query) BuildLimitOffset(buffer *builder.Buffer, limit rel.Limit, offset rel.Offset) {
+// WriteLimitOffet SQL to buffer.
+func (q Query) WriteLimitOffet(buffer *builder.Buffer, limit rel.Limit, offset rel.Offset) {
 	if limit > 0 && offset > 0 {
 		buffer.WriteString(" OFFSET ")
 		buffer.WriteString(strconv.Itoa(int(offset)))
