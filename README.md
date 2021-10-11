@@ -44,3 +44,17 @@ func main() {
 
 - Microsoft SQL Server 2017
 - Microsoft SQL Server 2019
+
+## Testing
+
+### Start Microsoft SQL server in Docker
+
+```console
+docker run -it --rm -p 1434:1433 -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=REL2021-mssql" -e "MSSQL_PID=Developer"  mcr.microsoft.com/mssql/server:2019-latest
+```
+
+### Run tests
+
+```console
+MSSQL_DATABASE="sqlserver://sa:REL2021-mssql@localhost:1434" go test ./...
+```

@@ -85,15 +85,17 @@ func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField stri
 // New mssql adapter using existing connection.
 func New(db *db.DB) rel.Adapter {
 	var (
-		bufferFactory    = builder.BufferFactory{ArgumentPlaceholder: "@p", ArgumentOrdinal: true, EscapePrefix: "[", EscapeSuffix: "]"}
+		bufferFactory    = builder.BufferFactory{ArgumentPlaceholder: "@p", ArgumentOrdinal: true, BoolTrueValue: "1", BoolFalseValue: "0", Quoter: builder.Quote{IDPrefix: "[", IDSuffix: "]", IDSuffixEscapeChar: "]", ValueQuote: "'", ValueQuoteEscapeChar: "'"}}
 		filterBuilder    = builder.Filter{}
 		queryBuilder     = mssqlbuilder.Query{Query: builder.Query{BufferFactory: bufferFactory, Filter: filterBuilder}}
 		InsertBuilder    = mssqlbuilder.Insert{BufferFactory: bufferFactory}
 		insertAllBuilder = mssqlbuilder.InsertAll{BufferFactory: bufferFactory}
 		updateBuilder    = builder.Update{BufferFactory: bufferFactory, Query: queryBuilder, Filter: filterBuilder}
 		deleteBuilder    = builder.Delete{BufferFactory: bufferFactory, Query: queryBuilder, Filter: filterBuilder}
-		tableBuilder     = mssqlbuilder.Table{BufferFactory: bufferFactory, ColumnMapper: columnMapper}
-		indexBuilder     = mssqlbuilder.Index{BufferFactory: bufferFactory}
+		ddlBufferFactory = builder.BufferFactory{InlineValues: true, BoolTrueValue: "1", BoolFalseValue: "0", Quoter: builder.Quote{IDPrefix: "[", IDSuffix: "]", IDSuffixEscapeChar: "]", ValueQuote: "'", ValueQuoteEscapeChar: "'"}}
+		ddlQueryBuilder  = builder.Query{BufferFactory: ddlBufferFactory, Filter: filterBuilder}
+		tableBuilder     = mssqlbuilder.Table{BufferFactory: ddlBufferFactory, ColumnMapper: columnMapper}
+		indexBuilder     = mssqlbuilder.Index{BufferFactory: ddlBufferFactory, Query: ddlQueryBuilder, Filter: filterBuilder}
 	)
 
 	return &MSSQL{
