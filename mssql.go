@@ -190,7 +190,7 @@ func columnMapper(column *rel.Column) (string, int, int) {
 		} else if m > 4000 {
 			m = 4000
 		}
-	case rel.Text:
+	case rel.Text, rel.JSON:
 		typ = "NVARCHAR(MAX)"
 	case rel.Date:
 		typ = "DATE"
