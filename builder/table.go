@@ -1,7 +1,6 @@
 package builder
 
 import (
-	"encoding/json"
 	"strconv"
 
 	"github.com/go-rel/rel"
@@ -162,23 +161,7 @@ func (t Table) WriteColumn(buffer *builder.Buffer, column rel.Column) {
 
 	if column.Default != nil {
 		buffer.WriteString(" DEFAULT ")
-		switch v := column.Default.(type) {
-		case string:
-			// TODO: single quote only required by postgres.
-			buffer.WriteByte('\'')
-			buffer.WriteString(v)
-			buffer.WriteByte('\'')
-		case bool:
-			if v {
-				buffer.WriteString("'1'")
-			} else {
-				buffer.WriteString("'0'")
-			}
-		default:
-			// TODO: improve
-			bytes, _ := json.Marshal(column.Default)
-			buffer.Write(bytes)
-		}
+		buffer.WriteValue(column.Default)
 	}
 
 	t.WriteOptions(buffer, column.Options)

@@ -8,6 +8,8 @@ import (
 // Index builder.
 type Index struct {
 	BufferFactory builder.BufferFactory
+	Query         builder.QueryWriter
+	Filter        builder.Filter
 }
 
 // Build sql query for index.
@@ -63,6 +65,14 @@ func (i Index) WriteCreateIndex(buffer *builder.Buffer, index rel.Index) {
 			buffer.WriteEscape(col)
 			buffer.WriteString(" IS NOT NULL")
 		}
+	}
+	if !index.Filter.None() {
+		if index.Unique {
+			buffer.WriteString(" AND ")
+		} else {
+			buffer.WriteString(" WHERE ")
+		}
+		i.Filter.Write(buffer, index.Filter, i.Query)
 	}
 }
 
