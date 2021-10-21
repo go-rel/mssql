@@ -72,7 +72,7 @@ func (i Index) WriteCreateIndex(buffer *builder.Buffer, index rel.Index) {
 		} else {
 			buffer.WriteString(" WHERE ")
 		}
-		i.Filter.Write(buffer, index.Filter, i.Query)
+		i.Filter.Write(buffer, "", index.Filter, i.Query)
 	}
 }
 

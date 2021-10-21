@@ -78,14 +78,14 @@ func (q Query) WriteSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, 
 func (q Query) WriteQuery(buffer *builder.Buffer, query rel.Query) {
 	q.WriteFrom(buffer, query.Table)
 	q.WriteJoin(buffer, query.Table, query.JoinQuery)
-	q.WriteWhere(buffer, query.WhereQuery)
+	q.WriteWhere(buffer, query.Table, query.WhereQuery)
 
 	if len(query.GroupQuery.Fields) > 0 {
-		q.WriteGroupBy(buffer, query.GroupQuery.Fields)
-		q.WriteHaving(buffer, query.GroupQuery.Filter)
+		q.WriteGroupBy(buffer, query.Table, query.GroupQuery.Fields)
+		q.WriteHaving(buffer, query.Table, query.GroupQuery.Filter)
 	}
 
-	q.WriteOrderBy(buffer, query.SortQuery)
+	q.WriteOrderBy(buffer, query.Table, query.SortQuery)
 	q.WriteLimitOffet(buffer, query.LimitQuery, query.OffsetQuery)
 
 	if query.LockQuery != "" {
@@ -95,23 +95,23 @@ func (q Query) WriteQuery(buffer *builder.Buffer, query rel.Query) {
 }
 
 // WriteWhere SQL to buffer.
-func (q Query) WriteWhere(buffer *builder.Buffer, filter rel.FilterQuery) {
+func (q Query) WriteWhere(buffer *builder.Buffer, table string, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
 
 	buffer.WriteString(" WHERE ")
-	q.Filter.Write(buffer, filter, q)
+	q.Filter.Write(buffer, table, filter, q)
 }
 
 // WriteHaving SQL to buffer.
-func (q Query) WriteHaving(buffer *builder.Buffer, filter rel.FilterQuery) {
+func (q Query) WriteHaving(buffer *builder.Buffer, table string, filter rel.FilterQuery) {
 	if filter.None() {
 		return
 	}
 
 	buffer.WriteString(" HAVING ")
-	q.Filter.Write(buffer, filter, q)
+	q.Filter.Write(buffer, table, filter, q)
 }
 
 // WriteLimitOffet SQL to buffer.
