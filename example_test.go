@@ -2,14 +2,13 @@ package mssql_test
 
 import (
 	"context"
-	"testing"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/go-rel/mssql"
 	"github.com/go-rel/rel"
 )
 
-func TestExample(t *testing.T) {
+func Example() {
 	// open mssql connection.
 	adapter, err := mssql.Open("sqlserver://sa:REL2021-mssql@localhost:1433?database=rel")
 	if err != nil {
