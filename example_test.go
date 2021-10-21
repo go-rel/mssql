@@ -2,7 +2,6 @@ package mssql_test
 
 import (
 	"context"
-	"testing"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/go-rel/mssql"
