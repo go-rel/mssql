@@ -37,7 +37,7 @@ func (q Query) Write(buffer *builder.Buffer, query rel.Query) {
 
 	rootQuery := buffer.Len() == 0
 
-	q.WriteSelect(buffer, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
+	q.WriteSelect(buffer, query.Table, query.SelectQuery, query.LimitQuery, query.OffsetQuery)
 	q.WriteQuery(buffer, query)
 
 	if rootQuery {
@@ -46,7 +46,7 @@ func (q Query) Write(buffer *builder.Buffer, query rel.Query) {
 }
 
 // WriteSelect SQL to buffer.
-func (q Query) WriteSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
+func (q Query) WriteSelect(buffer *builder.Buffer, table string, selectQuery rel.SelectQuery, limit rel.Limit, offset rel.Offset) {
 	buffer.WriteString("SELECT")
 
 	if selectQuery.OnlyDistinct {
@@ -63,7 +63,7 @@ func (q Query) WriteSelect(buffer *builder.Buffer, selectQuery rel.SelectQuery, 
 
 		l := len(selectQuery.Fields) - 1
 		for i, f := range selectQuery.Fields {
-			buffer.WriteEscape(f)
+			buffer.WriteField(table, f)
 
 			if i < l {
 				buffer.WriteString(", ")

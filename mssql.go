@@ -166,9 +166,9 @@ func columnMapper(column *rel.Column) (string, int, int) {
 
 	switch column.Type {
 	case rel.ID:
-		typ = "INT NOT NULL IDENTITY(1,1) PRIMARY KEY"
+		typ = "INT NOT NULL IDENTITY(1,1)"
 	case rel.BigID:
-		typ = "BIGINT NOT NULL IDENTITY(1,1) PRIMARY KEY"
+		typ = "BIGINT NOT NULL IDENTITY(1,1)"
 	case rel.Bool:
 		typ = "BIT"
 	case rel.Int:
