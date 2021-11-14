@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/go-rel/rel"
-	"github.com/go-rel/rel/adapter/specs"
+	"github.com/go-rel/sql/specs"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,11 +29,11 @@ func TestAdapter_specs(t *testing.T) {
 	repo := rel.New(adapter)
 
 	// Prepare tables
-	teardown := specs.Setup(t, repo)
+	teardown := specs.Setup(repo)
 	defer teardown()
 
 	// Migration Specs
-	specs.Migrate(t, repo)
+	specs.Migrate()
 
 	// Query Specs
 	specs.Query(t, repo)
