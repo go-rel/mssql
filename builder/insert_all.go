@@ -1,6 +1,8 @@
 package builder
 
 import (
+	"log"
+
 	"github.com/go-rel/rel"
 	"github.com/go-rel/sql/builder"
 )
@@ -11,12 +13,16 @@ type InsertAll struct {
 }
 
 // Build SQL string and its arguments.
-func (ia InsertAll) Build(table string, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate) (string, []interface{}) {
+func (ia InsertAll) Build(table string, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate, onConflict rel.OnConflict) (string, []interface{}) {
 	var (
 		buffer         = ia.BufferFactory.Create()
 		mutatesCount   = len(bulkMutates)
 		identityInsert = false
 	)
+
+	if onConflict.Keys != nil {
+		log.Println("[REL] OnConflict clause is not yet supported in MSSQL, feel free to open a PR!")
+	}
 
 	for i := range fields {
 		if primaryField == fields[i] {
