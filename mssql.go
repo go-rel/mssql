@@ -32,10 +32,10 @@ func (m MSSQL) Begin(ctx context.Context) (rel.Adapter, error) {
 }
 
 // Insert inserts a record to database and returns its id.
-func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string, mutates map[string]rel.Mutate) (interface{}, error) {
+func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string, mutates map[string]rel.Mutate, onConflict rel.OnConflict) (interface{}, error) {
 	var (
 		id              int64
-		statement, args = m.InsertBuilder.Build(query.Table, primaryField, mutates)
+		statement, args = m.InsertBuilder.Build(query.Table, primaryField, mutates, onConflict)
 		rows, err       = m.DoQuery(ctx, statement, args)
 	)
 
@@ -55,10 +55,10 @@ func (m MSSQL) Insert(ctx context.Context, query rel.Query, primaryField string,
 }
 
 // InsertAll inserts multiple records to database and returns its ids.
-func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate) ([]interface{}, error) {
+func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField string, fields []string, bulkMutates []map[string]rel.Mutate, onConflict rel.OnConflict) ([]interface{}, error) {
 	var (
 		ids             []interface{}
-		statement, args = m.InsertAllBuilder.Build(query.Table, primaryField, fields, bulkMutates)
+		statement, args = m.InsertAllBuilder.Build(query.Table, primaryField, fields, bulkMutates, onConflict)
 		rows, err       = m.DoQuery(ctx, statement, args)
 	)
 

@@ -1,6 +1,8 @@
 package builder
 
 import (
+	"log"
+
 	"github.com/go-rel/rel"
 	"github.com/go-rel/sql/builder"
 )
@@ -11,12 +13,16 @@ type Insert struct {
 }
 
 // Build sql query and its arguments.
-func (i Insert) Build(table string, primaryField string, mutates map[string]rel.Mutate) (string, []interface{}) {
+func (i Insert) Build(table string, primaryField string, mutates map[string]rel.Mutate, onConflict rel.OnConflict) (string, []interface{}) {
 	var (
 		buffer            = i.BufferFactory.Create()
 		_, identityInsert = mutates[primaryField]
 		arguments         = make([]interface{}, 0, len(mutates))
 	)
+
+	if onConflict.Keys != nil {
+		log.Println("[REL] OnConflict clause is not yet supported in MSSQL, feel free to open a PR!")
+	}
 
 	if identityInsert {
 		buffer.WriteString("SET IDENTITY_INSERT ")
