@@ -11,8 +11,8 @@ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMo
 github.com/fsnotify/fsnotify v1.4.9 h1:hsms1Qyu0jgnwNXIxa+/V/PDsU6CfLf6CNO8H7IWoS4=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/go-rel/rel v0.34.0/go.mod h1:YDHtnJhlaiSjANLGiZXvI57jg1amfpJSJlOimq6WJTE=
-github.com/go-rel/rel v0.34.1 h1:814BmKFzuyZAxHFxULV98b6CAOR5QyHTMh7JSyojcgo=
-github.com/go-rel/rel v0.34.1/go.mod h1:mXRZv7sVwtc/ztcY6dgzE5RV5MC+4/2PHPQUBAGiUG8=
+github.com/go-rel/rel v0.35.0 h1:A+jyWX8m4PSkXeFC22zq1hUXoLs/tXeP8Oitc3ZMqTg=
+github.com/go-rel/rel v0.35.0/go.mod h1:mXRZv7sVwtc/ztcY6dgzE5RV5MC+4/2PHPQUBAGiUG8=
 github.com/go-rel/sql v0.10.0 h1:VJmdKMdZthpk74GshorDBFjraios3FrFtUh+wjobh7E=
 github.com/go-rel/sql v0.10.0/go.mod h1:ZMieSY23hb3sw/IzUiTRORaciM/kdXIsxoBdAmNqsFY=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe h1:lXe2qZdvpiX5WZkZR4hgp4KJVfY3nMkvmwbVkpv1rVY=
