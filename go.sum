@@ -13,8 +13,8 @@ github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/go-rel/rel v0.39.0 h1:2zmK8kazM82iRRfWX7+mm1MxDkGKDj2W+xJLjguli5U=
 github.com/go-rel/rel v0.39.0/go.mod h1:yN6+aimHyRIzbuWFe5DaxiZPuVuPfd7GlLpy/YTqTUg=
-github.com/go-rel/sql v0.13.0 h1:BNSzn1Uf7v/jjVojejJPosvMfhQO+TRmm1/LdqytXag=
-github.com/go-rel/sql v0.13.0/go.mod h1:kAxb7ARO4vokQB+2ot4rNT1mhNzd0ofHp3oihvSw1oU=
+github.com/go-rel/sql v0.13.1 h1:Q3G9/QyK4p7AIDNviW0x3JrfdG5LyoLrGH9uoaUtA+o=
+github.com/go-rel/sql v0.13.1/go.mod h1:3t/E+2E/Y9rXURDD7ZMgpFdXLji10gP7gb57HeoaRNY=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe h1:lXe2qZdvpiX5WZkZR4hgp4KJVfY3nMkvmwbVkpv1rVY=
 github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe/go.mod h1:8vg3r2VgvsThLBIFL93Qb5yWzgyZWhEmBwUJWevAkK0=
 github.com/golang-sql/sqlexp v0.1.0 h1:ZCD6MBpcuOVfGVqsEmY5/4FtYiKz6tSyUv9LPEDei6A=
