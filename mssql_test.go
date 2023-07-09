@@ -133,3 +133,51 @@ func TestAdapter_Exec_error(t *testing.T) {
 	_, _, err = adapter.Exec(ctx, "error", nil)
 	assert.NotNil(t, err)
 }
+
+func TestAdapter_TableBuilder(t *testing.T) {
+	adapter, err := Open(dsn())
+	assert.Nil(t, err)
+	defer adapter.Close()
+
+	tests := []struct {
+		result string
+		table  rel.Table
+	}{
+		{
+			result: `ALTER TABLE [table] DROP CONSTRAINT [key];`,
+			table: rel.Table{
+				Op:   rel.SchemaAlter,
+				Name: "table",
+				Definitions: []rel.TableDefinition{
+					rel.Key{Op: rel.SchemaDrop, Name: "key", Type: rel.ForeignKey},
+				},
+			},
+		},
+		{
+			result: `ALTER TABLE [table] DROP CONSTRAINT [key];`,
+			table: rel.Table{
+				Op:   rel.SchemaAlter,
+				Name: "table",
+				Definitions: []rel.TableDefinition{
+					rel.Key{Op: rel.SchemaDrop, Name: "key", Type: rel.UniqueKey},
+				},
+			},
+		},
+		{
+			result: `ALTER TABLE [table] DROP CONSTRAINT [key];`,
+			table: rel.Table{
+				Op:   rel.SchemaAlter,
+				Name: "table",
+				Definitions: []rel.TableDefinition{
+					rel.Key{Op: rel.SchemaDrop, Name: "key", Type: rel.PrimaryKey},
+				},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.result, func(t *testing.T) {
+			assert.Equal(t, test.result, adapter.(*MSSQL).TableBuilder.Build(test.table))
+		})
+	}
+}

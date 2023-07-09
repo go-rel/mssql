@@ -94,7 +94,7 @@ func New(db *db.DB) rel.Adapter {
 		deleteBuilder    = builder.Delete{BufferFactory: bufferFactory, Query: queryBuilder, Filter: filterBuilder}
 		ddlBufferFactory = builder.BufferFactory{InlineValues: true, BoolTrueValue: "1", BoolFalseValue: "0", Quoter: builder.Quote{IDPrefix: "[", IDSuffix: "]", IDSuffixEscapeChar: "]", ValueQuote: "'", ValueQuoteEscapeChar: "'"}}
 		ddlQueryBuilder  = builder.Query{BufferFactory: ddlBufferFactory, Filter: filterBuilder}
-		tableBuilder     = mssqlbuilder.Table{BufferFactory: ddlBufferFactory, ColumnMapper: columnMapper}
+		tableBuilder     = mssqlbuilder.Table{BufferFactory: ddlBufferFactory, ColumnMapper: columnMapper, DropKeyMapper: sql.DropKeyMapper}
 		indexBuilder     = mssqlbuilder.Index{BufferFactory: ddlBufferFactory, Query: ddlQueryBuilder, Filter: filterBuilder}
 	)
 
