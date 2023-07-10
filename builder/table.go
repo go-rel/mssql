@@ -11,6 +11,7 @@ import (
 type Table struct {
 	BufferFactory builder.BufferFactory
 	ColumnMapper  builder.ColumnMapper
+	DropKeyMapper builder.DropKeyMapper
 }
 
 // Build SQL query for table creation and modification.
@@ -103,6 +104,11 @@ func (t Table) WriteAlterTable(buffer *builder.Buffer, table rel.Table) {
 			case rel.SchemaCreate:
 				buffer.WriteString("ADD ")
 				t.WriteKey(buffer, v)
+			case rel.SchemaDrop:
+				buffer.WriteString("DROP ")
+				buffer.WriteString(t.DropKeyMapper(v.Type))
+				buffer.WriteString(" ")
+				buffer.WriteEscape(v.Name)
 			}
 		}
 
