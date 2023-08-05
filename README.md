@@ -16,7 +16,7 @@ package main
 import (
 	"context"
 
-	_ "github.com/denisenkom/go-mssqldb"
+	_ "github.com/microsoft/go-mssqldb"
 	"github.com/go-rel/mssql"
 	"github.com/go-rel/rel"
 )
@@ -38,6 +38,7 @@ func main() {
 
 ## Supported Driver
 
+- github.com/microsoft/go-mssqldb
 - github.com/denisenkom/go-mssqldb
 
 ## Supported Database
