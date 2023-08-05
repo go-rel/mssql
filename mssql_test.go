@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/go-rel/rel"
 	"github.com/go-rel/sql/specs"
+	_ "github.com/microsoft/go-mssqldb"
 	"github.com/stretchr/testify/assert"
 )
 

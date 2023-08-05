@@ -3,9 +3,9 @@ package mssql_test
 import (
 	"context"
 
-	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/go-rel/mssql"
 	"github.com/go-rel/rel"
+	_ "github.com/microsoft/go-mssqldb"
 )
 
 func Example() {
