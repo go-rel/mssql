@@ -18,15 +18,11 @@ type MSSQL struct {
 	sql.SQL
 }
 
-var (
-	_ rel.Adapter = (*MSSQL)(nil)
-)
+var _ rel.Adapter = (*MSSQL)(nil)
 
 // Begin begins a new transaction.
 func (m MSSQL) Begin(ctx context.Context) (rel.Adapter, error) {
-	var (
-		txSql, err = m.SQL.Begin(ctx)
-	)
+	txSql, err := m.SQL.Begin(ctx)
 
 	return &MSSQL{SQL: *txSql.(*sql.SQL)}, err
 }
@@ -85,7 +81,7 @@ func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField stri
 // New mssql adapter using existing connection.
 func New(db *db.DB) rel.Adapter {
 	var (
-		bufferFactory    = builder.BufferFactory{ArgumentPlaceholder: "@p", ArgumentOrdinal: true, BoolTrueValue: "1", BoolFalseValue: "0", Quoter: builder.Quote{IDPrefix: "[", IDSuffix: "]", IDSuffixEscapeChar: "]", ValueQuote: "'", ValueQuoteEscapeChar: "'"}}
+		bufferFactory    = builder.BufferFactory{AllowTableSchema: true, ArgumentPlaceholder: "@p", ArgumentOrdinal: true, BoolTrueValue: "1", BoolFalseValue: "0", Quoter: builder.Quote{IDPrefix: "[", IDSuffix: "]", IDSuffixEscapeChar: "]", ValueQuote: "'", ValueQuoteEscapeChar: "'"}}
 		filterBuilder    = builder.Filter{}
 		queryBuilder     = mssqlbuilder.Query{Query: builder.Query{BufferFactory: bufferFactory, Filter: filterBuilder}}
 		InsertBuilder    = mssqlbuilder.Insert{BufferFactory: bufferFactory}
@@ -115,7 +111,7 @@ func New(db *db.DB) rel.Adapter {
 
 // Open mssql connection using dsn.
 func Open(dsn string) (rel.Adapter, error) {
-	var database, err = db.Open("sqlserver", dsn)
+	database, err := db.Open("sqlserver", dsn)
 	return New(database), err
 }
 
@@ -124,7 +120,7 @@ func errorMapper(err error) error {
 		return nil
 	}
 
-	var msg = err.Error()
+	msg := err.Error()
 
 	switch {
 	case strings.HasPrefix(msg, "mssql: Violation of PRIMARY KEY"):
