@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-rel/rel v0.39.0
-	github.com/go-rel/sql v0.14.0
+	github.com/go-rel/sql v0.14.1-0.20230817122121-1d87de1e1a74
 	github.com/microsoft/go-mssqldb v1.5.0
 	github.com/stretchr/testify v1.8.4
 )
@@ -20,3 +20,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/go-rel/sql v0.14.0 => github.com/lafriks-fork/sql v0.15.1-0.20230814132010-79b68b85c382
