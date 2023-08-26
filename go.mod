@@ -3,8 +3,8 @@ module github.com/go-rel/mssql
 go 1.20
 
 require (
-	github.com/go-rel/rel v0.39.0
-	github.com/go-rel/sql v0.14.1-0.20230817122121-1d87de1e1a74
+	github.com/go-rel/rel v0.40.0
+	github.com/go-rel/sql v0.15.0
 	github.com/microsoft/go-mssqldb v1.5.0
 	github.com/stretchr/testify v1.8.4
 )
