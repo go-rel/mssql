@@ -16,8 +16,8 @@ github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/go-rel/rel v0.40.0 h1:Av2/Ub6fQn6UbwxTIHStfLb7W+knRhOVX8AWcC+pOBA=
 github.com/go-rel/rel v0.40.0/go.mod h1:6opWRxsoHoDq67fIDnsmcmnojpskWpPqCs0AoL/UrEU=
-github.com/go-rel/sql v0.15.1-0.20230926233117-4af81443c5e1 h1:bZPY44kTQgh/w2mvYW6I1PR6z+giWTQ6v+KTgSXIi48=
-github.com/go-rel/sql v0.15.1-0.20230926233117-4af81443c5e1/go.mod h1:gL4ljbWWc0LBCXAtWKPwO2vLkU6+7HaXXuvvo3ngld8=
+github.com/go-rel/sql v0.15.1-0.20230927020931-5b67559d2fe1 h1:K3wgZUbotCQT/a8S9/ZuPOfz77AqHiPNZHRm9DWlVnA=
+github.com/go-rel/sql v0.15.1-0.20230927020931-5b67559d2fe1/go.mod h1:9Jy+N+nTTjlq9QZquoj19tppYuBXMz2grOtTN6HBD3U=
 github.com/golang-jwt/jwt/v5 v5.0.0 h1:1n1XNM9hk7O9mnQoNBGolZvzebBQ7p93ULHRc28XJUE=
 github.com/golang-jwt/jwt/v5 v5.0.0/go.mod h1:pqrtFR0X4osieyHYxtmOUWsAWrfe1Q5UVIyoH402zdk=
 github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 h1:au07oEsX2xN0ktxqI+Sida1w446QrXBRJ0nee3SNZlA=
