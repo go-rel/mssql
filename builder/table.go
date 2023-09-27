@@ -16,9 +16,7 @@ type Table struct {
 
 // Build SQL query for table creation and modification.
 func (t Table) Build(table rel.Table) string {
-	var (
-		buffer = t.BufferFactory.Create()
-	)
+	buffer := t.BufferFactory.Create()
 
 	switch table.Op {
 	case rel.SchemaCreate:
@@ -36,7 +34,6 @@ func (t Table) Build(table rel.Table) string {
 
 // WriteCreateTable query to buffer.
 func (t Table) WriteCreateTable(buffer *builder.Buffer, table rel.Table) {
-
 	if table.Optional {
 		buffer.WriteString("IF OBJECT_ID('")
 		buffer.WriteEscape(table.Name)
@@ -141,9 +138,7 @@ func (t Table) WriteDropTable(buffer *builder.Buffer, table rel.Table) {
 
 // WriteColumn definition to buffer.
 func (t Table) WriteColumn(buffer *builder.Buffer, column rel.Column) {
-	var (
-		typ, m, n = t.ColumnMapper(&column)
-	)
+	typ, m, n := t.ColumnMapper(&column)
 
 	buffer.WriteEscape(column.Name)
 	buffer.WriteByte(' ')
@@ -165,7 +160,7 @@ func (t Table) WriteColumn(buffer *builder.Buffer, column rel.Column) {
 		buffer.WriteString(" UNIQUE")
 	}
 
-	if column.Required {
+	if column.Required && column.Type != rel.ID && column.Type != rel.BigID {
 		buffer.WriteString(" NOT NULL")
 	}
 
@@ -183,9 +178,7 @@ func (t Table) WriteColumn(buffer *builder.Buffer, column rel.Column) {
 
 // WriteKey definition to buffer.
 func (t Table) WriteKey(buffer *builder.Buffer, key rel.Key) {
-	var (
-		typ = string(key.Type)
-	)
+	typ := string(key.Type)
 
 	buffer.WriteString(typ)
 
