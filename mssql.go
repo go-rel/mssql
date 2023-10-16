@@ -18,12 +18,9 @@ type MSSQL struct {
 	sql.SQL
 }
 
-<<<<<<< HEAD
-=======
 // Name of database type this adapter implements.
 const Name string = "mssql"
 
->>>>>>> d315d7d (Implement adapter Name and add Name constant)
 var _ rel.Adapter = (*MSSQL)(nil)
 
 // Begin begins a new transaction.
