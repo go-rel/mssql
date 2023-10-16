@@ -5,8 +5,8 @@ go 1.21
 toolchain go1.21.0
 
 require (
-	github.com/go-rel/rel v0.40.0
-	github.com/go-rel/sql v0.15.1-0.20230927020931-5b67559d2fe1
+	github.com/go-rel/rel v0.40.1-0.20231007112841-2e07fc196025
+	github.com/go-rel/sql v0.15.1-0.20231007214945-be5e6ac51f86
 	github.com/microsoft/go-mssqldb v1.6.0
 	github.com/stretchr/testify v1.8.4
 )
