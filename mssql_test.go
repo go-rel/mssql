@@ -111,6 +111,10 @@ func TestAdapter_Open(t *testing.T) {
 }
 
 func TestAdapter_MustOpen(t *testing.T) {
+	t.Cleanup(func() {
+		dbOpen = db.Open
+	})
+
 	assert.Panics(t, func() {
 		dbOpen = func(driverName string, dataSourceName string) (*db.DB, error) {
 			return nil, assert.AnError
