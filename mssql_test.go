@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	db "database/sql"
 	"os"
 	"testing"
 
@@ -106,6 +107,16 @@ func TestAdapter_Open(t *testing.T) {
 	assert.NotPanics(t, func() {
 		adapter, _ := Open("root@tcp(localhost:3306)/rel_test")
 		defer adapter.Close()
+	})
+}
+
+func TestAdapter_MustOpen(t *testing.T) {
+	assert.Panics(t, func() {
+		dbOpen = func(driverName string, dataSourceName string) (*db.DB, error) {
+			return nil, assert.AnError
+		}
+
+		_ = MustOpen("root@tcp(localhost:3306)/rel_test?charset=utf8")
 	})
 }
 

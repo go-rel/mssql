@@ -117,9 +117,11 @@ func New(db *db.DB) rel.Adapter {
 	}
 }
 
+var dbOpen = db.Open
+
 // Open mssql connection using dsn.
 func Open(dsn string) (rel.Adapter, error) {
-	database, err := db.Open("sqlserver", dsn)
+	database, err := dbOpen("sqlserver", dsn)
 	return New(database), err
 }
 
