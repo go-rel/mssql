@@ -2,6 +2,7 @@ package mssql
 
 import (
 	"context"
+	db "database/sql"
 	"os"
 	"testing"
 
@@ -24,7 +25,7 @@ func dsn() string {
 func TestAdapter_specs(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.(*MSSQL).Close()
+	defer adapter.Close()
 
 	repo := rel.New(adapter)
 
@@ -99,20 +100,41 @@ func TestAdapter_Open(t *testing.T) {
 	// with parameter
 	assert.NotPanics(t, func() {
 		adapter, _ := Open("root@tcp(localhost:3306)/rel_test?charset=utf8")
-		defer adapter.(*MSSQL).Close()
+		defer adapter.Close()
 	})
 
 	// without paremeter
 	assert.NotPanics(t, func() {
 		adapter, _ := Open("root@tcp(localhost:3306)/rel_test")
-		defer adapter.(*MSSQL).Close()
+		defer adapter.Close()
 	})
+}
+
+func TestAdapter_MustOpen(t *testing.T) {
+	t.Cleanup(func() {
+		dbOpen = db.Open
+	})
+
+	assert.Panics(t, func() {
+		dbOpen = func(driverName string, dataSourceName string) (*db.DB, error) {
+			return nil, assert.AnError
+		}
+
+		_ = MustOpen("root@tcp(localhost:3306)/rel_test?charset=utf8")
+	})
+}
+
+func TestAdapter_Name(t *testing.T) {
+	adapter := MustOpen(dsn())
+	defer adapter.Close()
+
+	assert.Equal(t, Name, adapter.Name())
 }
 
 func TestAdapter_Transaction_commitError(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.(*MSSQL).Close()
+	defer adapter.Close()
 
 	assert.NotNil(t, adapter.Commit(ctx))
 }
@@ -120,7 +142,7 @@ func TestAdapter_Transaction_commitError(t *testing.T) {
 func TestAdapter_Transaction_rollbackError(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.(*MSSQL).Close()
+	defer adapter.Close()
 
 	assert.NotNil(t, adapter.Rollback(ctx))
 }
@@ -128,7 +150,7 @@ func TestAdapter_Transaction_rollbackError(t *testing.T) {
 func TestAdapter_Exec_error(t *testing.T) {
 	adapter, err := Open(dsn())
 	assert.Nil(t, err)
-	defer adapter.(*MSSQL).Close()
+	defer adapter.Close()
 
 	_, _, err = adapter.Exec(ctx, "error", nil)
 	assert.NotNil(t, err)

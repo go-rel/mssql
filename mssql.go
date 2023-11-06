@@ -18,6 +18,9 @@ type MSSQL struct {
 	sql.SQL
 }
 
+// Name of database type this adapter implements.
+const Name string = "mssql"
+
 var _ rel.Adapter = (*MSSQL)(nil)
 
 // Begin begins a new transaction.
@@ -78,6 +81,11 @@ func (m MSSQL) InsertAll(ctx context.Context, query rel.Query, primaryField stri
 	return ids, err
 }
 
+// Name of database adapter.
+func (MSSQL) Name() string {
+	return Name
+}
+
 // New mssql adapter using existing connection.
 func New(db *db.DB) rel.Adapter {
 	var (
@@ -109,10 +117,21 @@ func New(db *db.DB) rel.Adapter {
 	}
 }
 
+var dbOpen = db.Open
+
 // Open mssql connection using dsn.
 func Open(dsn string) (rel.Adapter, error) {
-	database, err := db.Open("sqlserver", dsn)
+	database, err := dbOpen("sqlserver", dsn)
 	return New(database), err
+}
+
+// MustOpen mssql connection using dsn.
+func MustOpen(dsn string) rel.Adapter {
+	adapter, err := Open(dsn)
+	if err != nil {
+		panic(err)
+	}
+	return adapter
 }
 
 func errorMapper(err error) error {
