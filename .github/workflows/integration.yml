@@ -35,5 +35,5 @@ jobs:
           sleep 15
           go test -race -tags=all -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         if: matrix.mssql == '2019'
