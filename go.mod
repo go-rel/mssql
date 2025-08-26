@@ -8,7 +8,7 @@ require (
 	github.com/go-rel/rel v0.42.0
 	github.com/go-rel/sql v0.17.0
 	github.com/microsoft/go-mssqldb v1.8.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 )
 
 require (
