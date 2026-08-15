@@ -33,5 +33,7 @@ jobs:
           sleep 15
           go test -race -tags=all -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         if: matrix.mssql == '2019'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
