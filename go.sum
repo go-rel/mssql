@@ -12,8 +12,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2 h1:XHOnouVk1mx
 github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2/go.mod h1:wP83P5OoQ5p6ip3ScPr0BAq0BvuPAvacpEuSzyouqAI=
 github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4HY=
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
-github.com/go-rel/rel v0.42.0 h1:LxtI/Q7ConrivN+rp95LvLnu7QWU0stD9/ZpeR6OdrU=
-github.com/go-rel/rel v0.42.0/go.mod h1:7RaEaNz30kCt/14m4VgdVWXFzATWnqJ40f0z1DnAUyk=
+github.com/go-rel/rel v0.43.0 h1:0rIK4Mot7XQtMRg81HXoWhcuPJfbUmbpLZUspN0hnD4=
+github.com/go-rel/rel v0.43.0/go.mod h1:cx+wYNvWTrjNPamozm8sYaIjdmNWQYc7rhenwyVib6c=
 github.com/go-rel/sql v0.17.0 h1:ldwI7ctxEAmXb1Dy0AiECbAPAkT43NEImzUjMdGPVlo=
 github.com/go-rel/sql v0.17.0/go.mod h1:JxiiqL4lOcK+/2UBYuGnQewBCYe2BptCcRQuhHFcv5o=
 github.com/golang-jwt/jwt/v5 v5.2.1 h1:OuVbFODueb089Lh128TAcimifWaLhJwVflnrgM17wHk=
